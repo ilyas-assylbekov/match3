@@ -1,4 +1,5 @@
 push = require "push"
+Timer = require "knife.timer"
 
 VIRTUAL_WIDTH = 384
 VIRTUAL_HEIGHT = 216
@@ -7,8 +8,14 @@ WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
 function love.load()
-    currentSecond = 0
-    secondTimer = 0
+    intervals = { 1, 2, 3, 4, 3, 2 }
+    counters = { 0, 0, 0, 0, 0, 0 }
+
+    for i = 1, 6 do
+        Timer.every( intervals[i], function ()
+            counters[i] = counters[i] + 1
+        end )
+    end
 
     love.graphics.setDefaultFilter( "nearest", "nearest" )
 
@@ -30,16 +37,13 @@ function love.keypressed( key )
 end
 
 function love.update( dt )
-    secondTimer = secondTimer + dt
-
-    if secondTimer > 1 then
-        currentSecond = currentSecond + 1
-        secondTimer = secondTimer % 1
-    end
+    Timer.update( dt )
 end
 
 function love.draw()
     push:start()
-    love.graphics.printf( "Timer: " .. tostring( currentSecond ) .. " seconds", 0, VIRTUAL_HEIGHT / 2 - 6, VIRTUAL_WIDTH, "center" )
+    for i = 1, 6 do
+        love.graphics.printf( "Timer: " .. tostring( counters[ i ] ) .. " seconds (every " .. tostring( intervals[ i ] ) .. ")", 0, 54 + i * 16, VIRTUAL_WIDTH, "center" )
+    end
     push:finish()
 end
