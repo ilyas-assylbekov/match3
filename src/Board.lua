@@ -38,6 +38,11 @@ function Board:initializeTiles()
         end
     end
 
+    for i = 1, math.random(8) do
+        local j = math.random(8)
+        self.tiles[i][j].shiny = true
+    end
+
     while self:calculateMatches() do
         
         -- recursively initialize if matches were returned so we always have
@@ -79,10 +84,16 @@ function Board:calculateMatches()
                     local match = {}
 
                     -- go backwards from here by matchNum
-                    for x2 = x - 1, x - matchNum, -1 do
-                        
+                    for x2 = x - 1, x - matchNum, -1 do                        
                         -- add each tile to the match that's in that match
                         table.insert(match, self.tiles[y][x2])
+
+                        if self.tiles[y][x2].shiny then
+                            match = {}
+                            for i = 1, 8 do
+                                table.insert( match, self.tiles[y][i] )
+                            end
+                        end
                     end
 
                     -- add this match to our total matches table
@@ -105,6 +116,14 @@ function Board:calculateMatches()
             -- go backwards from end of last row by matchNum
             for x = 8, 8 - matchNum + 1, -1 do
                 table.insert(match, self.tiles[y][x])
+
+                if self.tiles[y][x].shiny then
+                    match = {}
+                    for i = 1, 8 do
+                        table.insert( match, self.tiles[y][i] )
+                    end
+                end
+
             end
 
             table.insert(matches, match)
@@ -129,6 +148,13 @@ function Board:calculateMatches()
 
                     for y2 = y - 1, y - matchNum, -1 do
                         table.insert(match, self.tiles[y2][x])
+
+                        if self.tiles[y2][x].shiny then
+                            match = {}
+                            for i = 1, 8 do
+                                table.insert( match, self.tiles[i][x] )
+                            end
+                        end
                     end
 
                     table.insert(matches, match)
@@ -150,6 +176,13 @@ function Board:calculateMatches()
             -- go backwards from end of last row by matchNum
             for y = 8, 8 - matchNum + 1, -1 do
                 table.insert(match, self.tiles[y][x])
+
+                if self.tiles[y][x].shiny then
+                    match = {}
+                    for i = 1, 8 do
+                        table.insert( match, self.tiles[i][x] )
+                    end
+                end
             end
 
             table.insert(matches, match)

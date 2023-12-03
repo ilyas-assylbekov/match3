@@ -26,6 +26,13 @@ function Tile:init(x, y, color, variety)
     -- tile appearance/points
     self.color = color
     self.variety = variety
+
+    self.shiny = false
+    self.ifShiny = false
+
+    Timer.every(0.75, function()
+        self.ifShiny = not self.ifShiny
+    end)
 end
 
 function Tile:render(x, y)
@@ -39,4 +46,11 @@ function Tile:render(x, y)
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
         self.x + x, self.y + y)
+
+    -- if tile is shiny, draw white rectangle in the corner
+    if self.shiny then
+        if self.ifShiny then
+            love.graphics.draw( gTextures[ "star" ], self.x + x + 25, self.y + y + 5 )
+        end
+    end
 end
