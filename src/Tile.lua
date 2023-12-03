@@ -13,7 +13,7 @@
 
 Tile = Class{}
 
-function Tile:init(x, y, color, variety)
+function Tile:init(x, y, color, variety, shiny)
     
     -- board positions
     self.gridX = x
@@ -27,7 +27,7 @@ function Tile:init(x, y, color, variety)
     self.color = color
     self.variety = variety
 
-    self.shiny = false
+    self.shiny = shiny or false
     self.ifShiny = false
 
     Timer.every(0.75, function()
