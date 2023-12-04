@@ -168,7 +168,7 @@ function PlayState:update(dt)
                 
                 -- once the swap is finished, we can tween falling blocks as needed
                 :finish(function()
-                    self:calculateMatches()
+                    self:calculateMatches( self.highlightedTile, newTile, true )
                 end)
             end
         end
@@ -183,7 +183,7 @@ end
     have matched and replaces them with new randomized tiles, deferring most of this
     to the Board class.
 ]]
-function PlayState:calculateMatches()
+function PlayState:calculateMatches( highlightedTile, newTile, fall )
     self.highlightedTile = nil
 
     -- if we have any matches, remove them and tween the falling blocks that result
@@ -217,11 +217,32 @@ function PlayState:calculateMatches()
             
             -- recursively call function in case new matches have been created
             -- as a result of falling blocks once new blocks have finished falling
-            self:calculateMatches()
+            self:calculateMatches( highlightedTile, newTile, false )
         end)
     
     -- if no matches, we can continue playing
     else
+        if fall then
+            local tempX = highlightedTile.gridX
+            local tempY = highlightedTile.gridY
+            highlightedTile.gridX = newTile.gridX
+            highlightedTile.gridY = newTile.gridY
+            newTile.gridX = tempX
+            newTile.gridY = tempY
+
+            -- swap tiles in the tiles table
+            self.board.tiles[highlightedTile.gridY][highlightedTile.gridX] =
+                highlightedTile
+
+            self.board.tiles[newTile.gridY][newTile.gridX] = newTile
+
+            -- tween coordinates between the two so they swap
+            Timer.tween(0.25, {
+                [highlightedTile] = {x = newTile.x, y = newTile.y},
+                [newTile] = {x = highlightedTile.x, y = highlightedTile.y}
+            })
+        end
+
         self.canInput = true
     end
 end
