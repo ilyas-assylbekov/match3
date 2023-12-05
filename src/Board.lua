@@ -298,9 +298,8 @@ function Board:render()
     end
 end
 
---[[
+
 function Board:checkMatches()
-    debug.debug()
     -- Copy board
     local boardCopy = Board( self.x, self.y, self.level )
     boardCopy:copyTiles( self.tiles )
@@ -354,20 +353,30 @@ function Board:checkSwap( y, x, swapY, swapX )
     local currentTile = self.tiles[y][x]
     local swapTile = self.tiles[swapY][swapX]
 
-    local tempTile = Tile( currentTile.x, currentTile.y, currentTile.color, currentTile.variety, currentTile.shiny )
-    currentTile = swapTile
-    swapTile = tempTile
+    self:swap( currentTile, swapTile )
 
     local matches = self:calculateMatches()
 
     currentTile = self.tiles[y][x]
     swapTile = self.tiles[swapY][swapX]
 
-    tempTile = Tile( currentTile.x, currentTile.y, currentTile.color, currentTile.variety, currentTile.shiny )
-    currentTile = swapTile
-    swapTile = tempTile
+    self:swap( currentTile, swapTile )
 
     return matches
 
 end
-]]
+
+function Board:swap( tile1, tile2 )
+    local tempX = tile2.gridX
+    local tempY = tile2.gridY
+
+    tile2.gridX = tile1.gridX
+    tile2.gridY = tile1.gridY
+
+    tile1.gridX = tempX
+    tile1.gridY = tempY
+
+    -- swap tiles in the tiles table
+    self.tiles[tempY][tempX] = tile1
+    self.tiles[tile2.gridY][tile2.gridX] = tile2
+end

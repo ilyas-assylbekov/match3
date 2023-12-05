@@ -75,6 +75,11 @@ function PlayState:update(dt)
         love.event.quit()
     end
 
+    while not self.board:checkMatches() do
+        self.board = nil
+        self.board = Board(VIRTUAL_WIDTH - 272, 16, self.level)
+    end
+
     -- go back to start if time runs out
     if self.timer <= 0 then
         
@@ -219,6 +224,11 @@ function PlayState:calculateMatches( highlightedTile, newTile, fall )
             -- as a result of falling blocks once new blocks have finished falling
             self:calculateMatches( highlightedTile, newTile, false )
         end)
+
+        while not self.board:checkMatches() do
+            self.board = nil
+            self.board = Board(VIRTUAL_WIDTH - 272, 16, self.level)
+        end
     
     -- if no matches, we can continue playing
     else
