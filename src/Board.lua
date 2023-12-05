@@ -297,3 +297,77 @@ function Board:render()
         end
     end
 end
+
+--[[
+function Board:checkMatches()
+    debug.debug()
+    -- Copy board
+    local boardCopy = Board( self.x, self.y, self.level )
+    boardCopy:copyTiles( self.tiles )
+    -- Check every tile for every move
+    for y = 1, 8 do
+        for x = 1, 8 do
+            -- Check swap with right tile
+            local swapY = y
+            local swapX = math.min( 8, x + 1 )
+            if boardCopy:checkSwap( y, x, swapY, swapX ) then
+                return true
+            end
+            -- Check swap with down tile
+            swapY = math.min( 8, y + 1 )
+            swapX = x
+            if boardCopy:checkSwap( y, x, swapY, swapX ) then
+                return true
+            end
+            -- Check swap with right tile
+            swapY = y
+            swapX = math.max( 1, x - 1 )
+            if boardCopy:checkSwap( y, x, swapY, swapX ) then
+                return true
+            end
+            -- Check swap with up tile
+            swapY = math.max( 1, y - 1 )
+            swapX = x
+            if boardCopy:checkSwap( y, x, swapY, swapX ) then
+                return true
+            end
+
+        end
+    end
+
+    return false
+
+end
+
+function Board:copyTiles( tiles )
+    self.tiles = {}
+    for y = 1, 8 do
+        table.insert( self.tiles, {} )
+        for x = 1, 8 do
+            local newTile = Tile( x, y, tiles[y][x].color, tiles[y][x].variety, tiles[y][x].shiny )
+            table.insert( self.tiles[y], newTile )
+        end
+    end
+end
+
+function Board:checkSwap( y, x, swapY, swapX )
+    local currentTile = self.tiles[y][x]
+    local swapTile = self.tiles[swapY][swapX]
+
+    local tempTile = Tile( currentTile.x, currentTile.y, currentTile.color, currentTile.variety, currentTile.shiny )
+    currentTile = swapTile
+    swapTile = tempTile
+
+    local matches = self:calculateMatches()
+
+    currentTile = self.tiles[y][x]
+    swapTile = self.tiles[swapY][swapX]
+
+    tempTile = Tile( currentTile.x, currentTile.y, currentTile.color, currentTile.variety, currentTile.shiny )
+    currentTile = swapTile
+    swapTile = tempTile
+
+    return matches
+
+end
+]]
